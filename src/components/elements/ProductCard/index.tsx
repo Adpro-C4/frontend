@@ -1,5 +1,5 @@
 
-type ProductCardProps = {
+export type ProductCardProps = {
     stock: string, 
     price: string,
     name: string,
