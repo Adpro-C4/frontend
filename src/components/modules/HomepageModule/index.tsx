@@ -14,7 +14,7 @@ const HomepageModule = () => {
     const fetchProduct = async ()=> {
         const res = await axios.get("https://api-gateway-specialitystore.up.railway.app/product-service/product/all", {
             headers: {
-                'Origin': 'http://random-origin.com' // Ini adalah nilai acak untuk header Origin
+                'Origin': 'http://random-origin.com'
             }
         });
         console.log(res.data)

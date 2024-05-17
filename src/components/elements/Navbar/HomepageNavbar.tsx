@@ -5,12 +5,14 @@ import { IoCloseOutline } from "react-icons/io5";
 import SearchBar from "../Searchbar";
 import { IoCartOutline } from "react-icons/io5";
 import { GoHistory } from "react-icons/go";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [scrollPosition, setScrollPosition] = useState(0);
     const [scrollTimeout, setScrollTimeout] = useState<any>(null);
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const router = useRouter()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -65,14 +67,16 @@ const Navbar = () => {
     
     
     return (
-        <div className={`fixed top-0 px-8 lg:px-24 w-full flex flex-col items-center py-4  transition-all duration-500 ease-in-out
+        <div className={`fixed top-0 px-8 lg:px-24 w-full flex flex-col items-center py-4  transition-all duration-500 ease-in-out border-b-4 border-pink-200
         ${isFullscreen ? 'bg-white w-screen h-screen z-50' : 'bg-white w-screen z-30'}  ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className="flex w-full justify-between items-center xmd:items-start">
                 <img src="/specialitystore.png" className="w-12 h-12 rounded-full md:w-16 md:h-16 xlg:w-24 xlg:h-24" alt=""/>
                 <div className="hidden md:flex grow mx-8">
                 <div className="grow max-w-2xl mx-auto">
                 <SearchBar onSearch={function (query: string): void {
-                    throw new Error("Function not implemented.");
+                    if(query.trim().length > 0){
+                        router.push("/search?q="+query)
+                    }
                 } }/>
                 </div>
                 </div>
