@@ -82,6 +82,7 @@ const Navbar = () => {
                 </div>
                 <div></div>
                 <div className="hidden md:flex space-x-8 items-center  text-[#344175] font-semibold text-lg xlg:text-3xl">
+                    
                     <a href=""><IoCartOutline className="text-3xl text-pink-500"/></a>
                     <a href=""><GoHistory className="text-3xl text-pink-500"/></a>
                     <button className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
@@ -94,12 +95,25 @@ const Navbar = () => {
                 <IoCloseOutline className="text-[#344175] md:hidden text-lg cursor-pointer" onClick={handleHamburgerClick}/>}
             </div>
             {
-                isFullscreen && <div className="mt-16 flex flex-col text-center space-y-6  text-[#344175] font-semibold text-lg lg:text-2xl">
-                <a href="">Timeline</a>
-                <a href="">Divisi</a>
-                <a href="">Booklet</a>
-                <button className="flex px-12 text-white py-2 rounded-lg font-bold lg:text-2xl" style={{
-                background: 'var(--Gradient-2, linear-gradient(86deg, #BD2D3E 0.12%, #344175 96.25%))' }}>Daftar</button>
+                isFullscreen && <div className="mt-16 flex flex-col items-center w-screen text-center   text-[#344175] font-semibold text-lg lg:text-2xl">
+                <div className="grow max-w-2xl  px-8">
+                <SearchBar onSearch={function (query: string): void {
+                    if(query.trim().length > 0){
+                        router.push("/search?q="+query)
+                    }
+                } }/>
+                </div>
+                <a className="flex items-center mt-16  space-x-4" href="">
+                    <IoCartOutline className="text-3xl text-pink-500"/>
+                    <h1>Your Shopping Cart</h1>
+                </a>
+                <a className="flex items-center mt-8 space-x-4" href="">
+                    <GoHistory className="text-3xl text-pink-500"/>
+                    <h1>Your Order History</h1>
+                </a>
+                    <button className="flex px-8 mt-8  w-fit py-2 text-white rounded-xl font-semibold
+                     bg-gradient-to-r from-pink-500 to-blue-400
+                    xlg:text-3xl">Sign In</button>
         </div>
             }
         </div>
