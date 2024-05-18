@@ -1,9 +1,9 @@
 import { ProductCardProps } from "@/components/elements/ProductCard";
 import axios from "axios";
-import { BASE_URL } from "./baseUrl";
+import { UserDTO } from "@/models/UserDTO";
 
 export const getAllProduct = async (): Promise<ProductCardProps[]>=>{
-    const res = await axios.get(BASE_URL+"/product-service/product/all");
+    const res = await axios.get("/api-gateway-proxy/product-service/product/all");
         console.log(res.data)
         const nwProductCards : ProductCardProps[] = []
         res.data.map((datum:any)=>{
@@ -20,3 +20,9 @@ export const getAllProduct = async (): Promise<ProductCardProps[]>=>{
         })
         return nwProductCards
 }
+
+export const register = async (user: UserDTO): Promise<void> => {
+    await axios.post("/api-gateway-proxy/auth-service/auth/register/customer",
+    {user:{...user}, passwordConfirmation: user.password}
+    );
+} 

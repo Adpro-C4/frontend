@@ -1,10 +1,13 @@
 "use client"
 
+import { register } from "@/api/service"
 import PasswordValidator from "@/components/elements/PasswordValidator"
 import TextField from "@/components/elements/TextField"
+import { useRouter } from "next/navigation"
 import { useState, ChangeEvent } from "react"
 
 const RegisterSection = () => {
+    const router = useRouter()
     const [isEmailAlreadyInUse, setIsEmailAlreadyInUse] = useState<boolean>(false)
     const [isValidEmail, setIsValidEmail] = useState<boolean>(true)
     const [afterSubmit, setAfterSubmit] = useState<boolean>(false)
@@ -46,12 +49,22 @@ const RegisterSection = () => {
         setAfterSubmit(true)
         if(!isPasswordValid() || !checkIsEmailValid() || isEmpty(username) || 
         isEmpty(name) || isEmpty(phoneNumber)){
+            setPage(1)
             return;
         }
         try{
-
+            await register({
+                role: "CUSTOMER",
+                username: username,
+                password: password,
+                email: email,
+                name: name,
+                phoneNumber: phoneNumber
+            })
+            router.push("/login")
         }catch(err: any){
             if(err.response.status == 406){
+                setPage(1)
                 setIsEmailAlreadyInUse(true)
             }
             if(err.response.status == 429){
