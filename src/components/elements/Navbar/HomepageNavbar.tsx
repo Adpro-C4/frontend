@@ -70,7 +70,9 @@ const Navbar = () => {
         <div className={`fixed top-0 px-8 lg:px-24 w-full flex flex-col items-center py-4  transition-all duration-500 ease-in-out border-b-4 border-pink-200
         ${isFullscreen ? 'bg-white w-screen h-screen z-50' : 'bg-white w-screen z-30'}  ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className="flex w-full justify-between items-center xmd:items-start">
-                <img src="/specialitystore.png" className="w-12 h-12 rounded-full md:w-16 md:h-16 xlg:w-24 xlg:h-24" alt=""/>
+                <img onClick={()=>{
+                    router.push("/")
+                }} src="/specialitystore.png" className=" cursor-pointer w-12 h-12 rounded-full md:w-16 md:h-16 xlg:w-24 xlg:h-24" alt=""/>
                 <div className="hidden md:flex grow mx-8">
                 <div className="grow max-w-2xl mx-auto">
                 <SearchBar onSearch={function (query: string): void {
@@ -95,8 +97,8 @@ const Navbar = () => {
                 <IoCloseOutline className="text-[#344175] md:hidden text-lg cursor-pointer" onClick={handleHamburgerClick}/>}
             </div>
             {
-                isFullscreen && <div className="mt-16 flex flex-col items-center w-screen text-center   text-[#344175] font-semibold text-lg lg:text-2xl">
-                <div className="grow max-w-2xl  px-8">
+                isFullscreen && <div className="mt-16  flex flex-col items-center w-screen text-center   text-[#344175] font-semibold text-lg lg:text-2xl">
+                <div className="w-full flex max-w-2xl font-normal text-sm  px-8">
                 <SearchBar onSearch={function (query: string): void {
                     if(query.trim().length > 0){
                         router.push("/search?q="+query)
