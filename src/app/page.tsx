@@ -1,4 +1,4 @@
-import Navbar from "@/components/elements/Navbar/HomepageNavbar";
+import Navbar from "@/components/elements/Navbar/CustomerNavbar";
 import HomepageModule from "@/components/modules/HomepageModule";
 import Image from "next/image";
 

@@ -1,4 +1,4 @@
-import Navbar from "@/components/elements/Navbar/HomepageNavbar";
+import Navbar from "@/components/elements/Navbar/CustomerNavbar";
 import SearchModule from "@/components/modules/SearchModule";
 import { Suspense } from "react";
 
