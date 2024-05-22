@@ -29,6 +29,17 @@ export const register = async (user: UserDTO): Promise<void> => {
     );
 }
 
+export const loginAsCustomer = async (username: string, password: string) : Promise<UserDTO>=>{
+    const res = await axios.post("/api-gateway-proxy/auth-service/auth/login/customer",{
+        username: username,
+        password: password
+    })
+
+    const user: UserDTO = {...res.data.user, role: "CUSTOMER"}
+
+    return user
+}
+
 export const createVoucher = async (voucher: VoucherDTO): Promise<void>=> {
     await axios.post("/api-gateway-proxy/voucher-service/voucher/create",{
         ...voucher
