@@ -38,7 +38,6 @@ export const getProductById = async (id: number): Promise<Product> => {
         image: data.image,
         quantity: data.quantity
     }
-    return response.data;
   };
 
 export const createProduct = async (product: Product): Promise<Product> => {
