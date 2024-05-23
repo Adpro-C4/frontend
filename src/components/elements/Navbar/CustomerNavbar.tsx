@@ -6,13 +6,38 @@ import SearchBar from "../Searchbar";
 import { IoCartOutline } from "react-icons/io5";
 import { GoHistory } from "react-icons/go";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { UserDTO } from "@/models/UserDTO";
+import { logout } from "@/redux/slice/AuthSlice";
 
 const Navbar = () => {
+    const user: undefined|UserDTO = useSelector((state:any)=> state.auth.user);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [scrollPosition, setScrollPosition] = useState(0);
     const [scrollTimeout, setScrollTimeout] = useState<any>(null);
     const [isFullscreen, setIsFullscreen] = useState(false)
     const router = useRouter()
+    const dispatch = useDispatch()
+
+    useEffect(()=>{
+       //console.log(user)
+        if(user){
+            if(user.role != "CUSTOMER"){
+                alert("Maaf, anda masuk sebagai admin bukan customer")
+                router.push("/product")
+            }
+        }
+    },[user])
+
+    const loginOrLogout = () => {
+        if(user){
+            dispatch(logout())
+        }
+        else{
+            router.push("/login")
+        }
+    }
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -85,11 +110,11 @@ const Navbar = () => {
                 <div></div>
                 <div className="hidden md:flex space-x-8 items-center  text-[#344175] font-semibold text-lg xlg:text-3xl">
                     
-                    <a href=""><IoCartOutline className="text-3xl text-pink-500"/></a>
-                    <a href=""><GoHistory className="text-3xl text-pink-500"/></a>
-                    <button className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
+                    <a href="/cart"><IoCartOutline className="text-3xl text-pink-500"/></a>
+                    <a href="/order"><GoHistory className="text-3xl text-pink-500"/></a>
+                    <button onClick={loginOrLogout} className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
                      bg-gradient-to-r from-pink-500 to-blue-400
-                    xlg:text-3xl">Sign In</button>
+                    xlg:text-3xl">{user? "Log Out": "Sign In"}</button>
                 </div>
                 
                 {!isFullscreen ? <GiHamburgerMenu className="text-[#344175] md:hidden text-lg cursor-pointer" 
@@ -105,17 +130,17 @@ const Navbar = () => {
                     }
                 } }/>
                 </div>
-                <a className="flex items-center mt-16  space-x-4" href="">
+                <a className="flex items-center mt-16  space-x-4" href="/cart">
                     <IoCartOutline className="text-3xl text-pink-500"/>
                     <h1>Your Shopping Cart</h1>
                 </a>
-                <a className="flex items-center mt-8 space-x-4" href="">
+                <a className="flex items-center mt-8 space-x-4" href="/order">
                     <GoHistory className="text-3xl text-pink-500"/>
                     <h1>Your Order History</h1>
                 </a>
-                    <button className="flex px-8 mt-8  w-fit py-2 text-white rounded-xl font-semibold
+                    <button onClick={loginOrLogout} className="flex px-8 mt-8  w-fit py-2 text-white rounded-xl font-semibold
                      bg-gradient-to-r from-pink-500 to-blue-400
-                    xlg:text-3xl">Sign In</button>
+                    xlg:text-3xl">{user? "Log Out": "Sign In"}</button>
         </div>
             }
         </div>
