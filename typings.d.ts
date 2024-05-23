@@ -25,10 +25,26 @@ export interface Order {
     price: string;
     id: string;
     totalPrice: number;
+    status?: Status;
+    voucher?:Voucher;
   }
-  
+
+export interface Status{
+    id: number;
+    orderId: string;
+    orderStatus: string;
+}
+
 export interface OrderResponse {
     data: {
       orders: Order[];
     };
   }
+
+export interface Voucher{
+    voucherId: number;
+    voucherName: string;
+    voucherDescription: string;
+    voucherDiscount:number;
+}
+

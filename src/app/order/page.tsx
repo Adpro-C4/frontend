@@ -1,30 +1,101 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { CustomerDetails, CartItem, Order, OrderResponse } from '../../../../typings';
+import { CustomerDetails, CartItem, Order, OrderResponse } from '../../../typings';
+import Navbar from '@/components/elements/Navbar/CustomerNavbar';
+import { UserDTO } from '@/models/UserDTO';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import AdminNavbar from '@/components/elements/Navbar/AdminNavbar';
 
 function OrderStatus() {
-  const [orderlist, setOrderList] = useState<Order[] | null>(null);
+  const [orderlist, setOrderList] = useState<Record<string,Order> | null>(null);
+  const user: undefined|UserDTO = useSelector((state:any)=> state.auth.user);
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchOrderData = async () => {
-      try {
-        const response = await axios.get<OrderResponse>('https://purchase-service-specialitystore.up.railway.app/order/view');
-        setOrderList(response.data.data.orders);
-      } catch (error) {
-        console.error('Error fetching order data:', error);
+      if(!user){
+        router.push('/login')
       }
-    };
+
+  }, [user])
+
+
+  const fetchOrderData = async () => {
+    try {
+      const response = await axios.get<OrderResponse>('https://purchase-service-specialitystore.up.railway.app/order/view');
+    //   const response = await axios.get<OrderResponse>(`https://purchase-service-specialitystore.up.railway.app/order/view/user/${user?.id}`);
+      const responseStatus = await axios.get('https://microservice-status-production.up.railway.app/api/status/all');
+
+      const mapStatusOrder:Record<string,Order> = {}
+
+      console.log(response);
+      console.log(responseStatus);
+
+      response.data.data.orders.forEach((order:Order) => {
+         mapStatusOrder[order.id] = order;
+      })
+
+      responseStatus.data.forEach((status:any) => {
+          if(mapStatusOrder[status.orderId] != null){
+              mapStatusOrder[status.orderId].status = status;
+          }
+      })
+
+      setOrderList(mapStatusOrder);
+    } catch (error) {
+      console.error('Error fetching order data:', error);
+    }
+};
+  useEffect(() => {
+     
 
     fetchOrderData();
   }, []);
 
+
+  
+
+  const onAccept = async(id:number, orderId:string)=>{
+    const data = {
+        id:id,
+        orderId: orderId,
+        orderStatus: "Selesai",
+    }
+    const responseAccept = await axios.post(`https://microservice-status-production.up.railway.app/api/status/update/${id}`, data);
+    fetchOrderData();
+  }
+
+  const onReject = async(id:number, orderId:string)=>{
+    const data = {
+        id:id,
+        orderId: orderId,
+        orderStatus: "Gagal",
+    }
+    const responseAccept = await axios.post(`https://microservice-status-production.up.railway.app/api/status/update/${id}`, data);
+    fetchOrderData();
+  }
+
+  useEffect(() => {
+     
+
+    fetchOrderData();
+  }, []);
+
+
+
+  
+
   return (
+    <main className="flex flex-col items-center w-screen min-h-screen bg-gray-200">
+    <AdminNavbar/>
+    
     <div className="container mx-auto p-4">
+    
       <h1 className="text-2xl font-bold mb-4">Status Order</h1>
       {orderlist ? (
         <ul className="space-y-4">
-          {orderlist.map((order) => (
+          {Object.values(orderlist).map((order) => (
             <li key={order.id} className="bg-white shadow-md rounded-lg p-4">
               <p className="text-gray-700"><strong>User ID:</strong> {order.userId}</p>
               <p className="text-gray-700"><strong>Timestamp:</strong> {new Date(order.timestamp).toLocaleString()}</p>
@@ -39,7 +110,19 @@ function OrderStatus() {
               </ul>
               <p className="text-gray-700"><strong>Address:</strong> {order.address}</p>
               <p className="text-gray-700"><strong>Price:</strong> {order.price}</p>
-              <p className="text-gray-700"><strong>Total Price:</strong> {order.totalPrice}</p>
+              <p className="text-gray-700">{order.price}</p>
+              <p className="text-gray-700">{order.status?.orderStatus}</p>
+              {(order.voucher) && (
+                  <div>
+                      <h1 className="font-bold text-gray-700">Voucher</h1>
+                      <p className="text-gray-700">{order.voucher.voucherId}</p>
+                      <p className="text-gray-700">{order.voucher.voucherName}</p>
+                      <p className="text-gray-700">{order.voucher.voucherDescription}</p>
+                      <p className="text-gray-700">{order.voucher.voucherDiscount}</p>
+                  </div>
+              )}
+
+              
               {order.cartItems.length > 0 && (
                 <div>
                   <p className="text-gray-700"><strong>Cart Items:</strong></p>
@@ -55,6 +138,13 @@ function OrderStatus() {
                   </ul>
                 </div>
               )}
+                { order.status?.orderStatus == 'Menunggu Persetujuan Admin' && (
+                    <div>
+                        <button onClick={() => {onAccept(order.status!.id, order.status!.orderId)}} className="bg-red-500">Accept</button>
+                        <button onClick={() => {onReject(order.status!.id, order.status!.orderId)}}  className="bg-green-500">Reject</button>
+                    </div>
+                )
+                }
             </li>
           ))}
         </ul>
@@ -68,6 +158,8 @@ function OrderStatus() {
         </div>
       )}
     </div>
+  </main>
+
   );
 }
 
