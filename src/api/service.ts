@@ -3,6 +3,10 @@ import axios from "axios";
 import { UserDTO } from "@/models/UserDTO";
 
 import { VoucherDTO } from "@/models/VoucherDTO";
+import { DTOCartItemUpdateInformation } from "@/models/DTOCartItemUpdateInformation";
+import { DTOCartItem } from "@/models/DTOCartItem";
+import { DTOCartDeletionInformation } from "@/models/DTOCartDeletionInformation";
+import { DTOPurchaseInformation } from "@/models/DTOPurchaseInformation";
 
 export const getAllProduct = async (): Promise<ProductCardProps[]>=>{
     const res = await axios.get("/api-gateway-proxy/product-service/product/all");
@@ -16,8 +20,6 @@ export const getAllProduct = async (): Promise<ProductCardProps[]>=>{
                 productId: datum.id.toString(),
                 imageUrl: datum.image,
                 category: datum.category,
-                onAddToCart: function (productId: string): void {
-                }
             })
         })
         return nwProductCards
@@ -35,7 +37,8 @@ export const loginAsCustomer = async (username: string, password: string) : Prom
         password: password
     })
 
-    const user: UserDTO = {...res.data.user, role: "CUSTOMER"}
+
+    const user: UserDTO = {...res.data.data.user, role: "CUSTOMER"}
     console.log(user.id);
     return user
 }
@@ -46,7 +49,7 @@ export const loginAsAdmin = async (username: string, password: string) : Promise
         password: password
     })
 
-    const user: UserDTO = {...res.data.user, role: "ADMIN"}
+    const user: UserDTO = {...res.data.data.user, role: "ADMIN"}
     console.log(user.id);
 
     return user
@@ -102,4 +105,45 @@ export const getVoucherById = async (id: number): Promise<VoucherDTO> => {
         voucherDiscount: data.voucherDiscount
     }
 
+}
+
+export const getShoppingcartData = async (id: string) => {
+    const res = await axios.get("/api-gateway-proxy/purchase-service/shopping-cart/data/"+id)
+    const shoppingCartItems: DTOCartItem[] = []
+    console.log(res.data)
+    const shoppingCart = res.data.data.shoppingCart;
+    shoppingCart.map((data:any)=>{
+        shoppingCartItems.push({
+            ...data
+        })
+    })
+    return shoppingCartItems
+}
+
+export const modifyShoppingCartData = async (data: DTOCartItemUpdateInformation) => {
+    await axios.post("/api-gateway-proxy/purchase-service/shopping-cart/update",
+        {
+            ...data
+        }
+    )
+}
+
+export const deleteShoppingCartItemData = async (data: DTOCartDeletionInformation) => {
+    try {
+      const response = await axios.post(`/api-gateway-proxy/purchase-service/shopping-cart/delete`, {
+          userId: data.userId,
+          productId: data.productId
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting shopping cart item:', error);
+      throw error;
+    }
+  };
+
+export const createPurchaseRequest = async (data: DTOPurchaseInformation) => {
+    console.log(data)
+    await axios.post("/api-gateway-proxy/purchase-service/order/create",
+        {...data}
+    )
 }
