@@ -18,10 +18,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({lst}) =>{
         price={product.price} 
         name={product.name} 
         productId={product.productId} 
-        imageUrl={product.imageUrl} 
-        onAddToCart={function (productId: string): void {
-                throw new Error("Function not implemented.")
-            } }/>
+        imageUrl={product.imageUrl} />
       ))}
         </div>
     </div>
