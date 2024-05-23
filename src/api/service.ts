@@ -36,9 +36,9 @@ export const getProductById = async (id: number): Promise<Product> => {
         brand: data.brand,
         category: data.category,
         image: data.image,
-        quantity: data
+        quantity: data.quantity
     }
-    return response.data;
+
   };
 
 export const createProduct = async (product: Product): Promise<Product> => {
