@@ -25,9 +25,7 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({lst, searchTex
                               name={data.name}
                                productId={data.productId}
                                 imageUrl={data.imageUrl} 
-                                onAddToCart={function (productId: string): void {
-                                throw new Error('Function not implemented.');
-                            } }/>
+                                />
                         })
                     }
                 </div>
