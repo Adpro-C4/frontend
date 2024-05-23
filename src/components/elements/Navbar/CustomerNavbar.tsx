@@ -111,7 +111,7 @@ const Navbar = () => {
                 <div className="hidden md:flex space-x-8 items-center  text-[#344175] font-semibold text-lg xlg:text-3xl">
                     
                     <a href="/cart"><IoCartOutline className="text-3xl text-pink-500"/></a>
-                    <a href="/order"><GoHistory className="text-3xl text-pink-500"/></a>
+                    <a href="/order-history"><GoHistory className="text-3xl text-pink-500"/></a>
                     <button onClick={loginOrLogout} className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
                      bg-gradient-to-r from-pink-500 to-blue-400
                     xlg:text-3xl">{user? "Log Out": "Sign In"}</button>
@@ -134,7 +134,7 @@ const Navbar = () => {
                     <IoCartOutline className="text-3xl text-pink-500"/>
                     <h1>Your Shopping Cart</h1>
                 </a>
-                <a className="flex items-center mt-8 space-x-4" href="/order">
+                <a className="flex items-center mt-8 space-x-4" href="/order-history">
                     <GoHistory className="text-3xl text-pink-500"/>
                     <h1>Your Order History</h1>
                 </a>
