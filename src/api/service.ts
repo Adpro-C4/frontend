@@ -35,7 +35,8 @@ export const loginAsCustomer = async (username: string, password: string) : Prom
         password: password
     })
 
-    const user: UserDTO = {...res.data.user, role: "CUSTOMER"}
+
+    const user: UserDTO = {...res.data.data.user, role: "CUSTOMER"}
     console.log(user.id);
     return user
 }
@@ -46,7 +47,7 @@ export const loginAsAdmin = async (username: string, password: string) : Promise
         password: password
     })
 
-    const user: UserDTO = {...res.data.user, role: "ADMIN"}
+    const user: UserDTO = {...res.data.data.user, role: "ADMIN"}
     console.log(user.id);
 
     return user
@@ -102,4 +103,9 @@ export const getVoucherById = async (id: number): Promise<VoucherDTO> => {
         voucherDiscount: data.voucherDiscount
     }
 
+}
+
+export const getShoppingcartData = async (id: string) => {
+    const res = await axios.get("/api-gateway-proxy/purchase-service/shopping-cart/data/"+id)
+    console.log(res.data)
 }
