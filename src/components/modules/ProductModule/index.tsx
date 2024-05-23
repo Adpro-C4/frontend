@@ -1,8 +1,9 @@
 "use client"
-import { createProduct, updateProduct, deleteProduct, getProductById } from "@/api/service";
+import { createProduct, updateProduct, deleteProduct, getProductById, getAllProduct } from "@/api/service";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Product } from "@/models/Product";
+import { Product} from "@/models/Product";
+import { ProductCardProps } from "@/components/elements/ProductCard";
 
 const ProductModule = () => {
     const router = useRouter();
@@ -21,6 +22,19 @@ const ProductModule = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [productId, setProductId] = useState<number | null>(null);
+    const [allProducts, setAllProducts] = useState<ProductCardProps[]>([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const products = await getAllProduct();
+                setAllProducts(products);
+            } catch (error) {
+                setError('Failed to fetch products');
+            }
+        };
+        fetchProducts();
+    }, []);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -28,8 +42,20 @@ const ProductModule = () => {
                 try {
                     const product = await getProductById(productId);
                     setFormData(product);
+                    setError('');
                 } catch (error) {
-                    setError('Failed to fetch product');
+                    setFormData({
+                        id: 0,
+                        name: '',
+                        description: '',
+                        price: 0,
+                        discount: 0,
+                        brand: '',
+                        category: '',
+                        image: '',
+                        quantity: 0,
+                    });
+                    setError('Product not found');
                 }
             }
         };
@@ -194,41 +220,73 @@ const ProductModule = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity (Integer):</label>
-                    <input
-                        type="number"
-                        id="quantity"
-                        name="quantity"
-                        value={formData.quantity}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border text-black border-gray-300 rounded-md p-2"
-                        required
-                    />
-                </div>
-                <button type="submit" className="w-full bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-700">
-                    {formData.id ? 'Update' : 'Create'} Product
-                </button>
-            </form>
-            {formData.id > 0 && (
-                <button onClick={handleDelete} className="mt-4 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700">
-                    Delete Product
-                </button>
-            )}
-            <div className="mt-8">
-                <h2 className="text-xl font-bold mb-4 text-black">Fetch Product by ID to Delete or Update</h2>
-                <input
-                    type="number"
-                    value={productId || ''}
-                    onChange={e => setProductId(Number(e.target.value))}
-                    placeholder="Product ID"
-                    className="block w-full mb-4 text-black border border-gray-300 rounded-md p-2"
-                />
-                <button onClick={() => setProductId(productId)} className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-                    Fetch Product
-                </button>
-            </div>
-        </div>
-    );
+                   <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity (Integer):</label>
+                   <input
+                       type="number"
+                       id="quantity"
+                       name="quantity"
+                       value={formData.quantity}
+                       onChange={handleChange}
+                       className="mt-1 block w-full border text-black border-gray-300 rounded-md p-2"
+                       required
+                   />
+               </div>
+               <button type="submit" className="w-full bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-700">
+                   {formData.id ? 'Update' : 'Create'} Product
+               </button>
+           </form>
+           {formData.id > 0 && (
+               <button onClick={handleDelete} className="mt-4 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700">
+                   Delete Product
+               </button>
+           )}
+           <div className="mt-8">
+               <h2 className="text-xl font-bold mb-4 text-black">Fetch Product by ID to Delete or Update</h2>
+               <input
+                   type="number"
+                   value={productId || ''}
+                   onChange={e => setProductId(Number(e.target.value))}
+                   placeholder="Product ID"
+                   className="block w-full mb-4 text-black border border-gray-300 rounded-md p-2"
+               />
+               <button onClick={() => setProductId(productId)} className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                   Fetch Product
+               </button>
+           </div>
+           <div className="mt-8">
+               <h2 className="text-xl font-bold mb-4 text-black">All Products</h2>
+               <table className="w-full table-auto">
+                   <thead>
+                       <tr>
+                           <th className="px-4 py-2">ID</th>
+                           <th className="px-4 py-2">Name</th>
+                           <th className="px-4 py-2">Description</th>
+                           <th className="px-4 py-2">Price</th>
+                           <th className="px-4 py-2">Discount</th>
+                           <th className="px-4 py-2">Brand</th>
+                           <th className="px-4 py-2">Category</th>
+                           <th className="px-4 py-2">Image</th>
+                           <th className="px-4 py-2">Quantity</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       {allProducts.map((product) => (
+                           <tr key={product.productId}>
+                               <td className="border px-4 py-2">{product.productId}</td>
+                               <td className="border px-4 py-2">{product.name}</td>
+                               <td className="border px-4 py-2">{product.price}</td>
+                               <td className="border px-4 py-2">{product.category}</td>
+                               <td className="border px-4 py-2">
+                                   <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover" />
+                               </td>
+                               <td className="border px-4 py-2">{product.stock}</td>
+                           </tr>
+                       ))}
+                   </tbody>
+               </table>
+           </div>
+       </div>
+   );
 };
 
 export default ProductModule;
