@@ -7,8 +7,8 @@ const nextConfig = {
             destination: 'https://api-gateway-specialitystore.up.railway.app/:path*' // Proxy ke produk eksternal
           },
           {
-            source: '/product-development/:path*',
-            destination: 'http://localhost:8080/:path*'
+            source: '/local/:path*',
+            destination: "http://localhost:8080/:path*"
           }
         ]
       }
