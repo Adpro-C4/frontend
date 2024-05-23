@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { MdOutlineDiscount, MdOutlineNote } from "react-icons/md";
 import { BsBox } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/slice/AuthSlice";
+import { UserDTO } from "@/models/UserDTO";
 
 const AdminNavbar = () => {
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
@@ -16,6 +19,8 @@ const AdminNavbar = () => {
     const [scrollTimeout, setScrollTimeout] = useState<any>(null);
     const [isFullscreen, setIsFullscreen] = useState(false)
     const router = useRouter()
+    const dispatch = useDispatch()
+    const user: undefined|UserDTO = useSelector((state:any)=> state.auth.user);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -60,6 +65,19 @@ const AdminNavbar = () => {
         };
     }, [isFullscreen]);
 
+    useEffect(()=>{
+        if(user){
+            if(user.role != "ADMIN"){
+                alert("Maaf, anda masuk sebagai customer bukan admin")
+                router.push("/")
+            }
+        }
+        else{
+            alert("Anda tidak memiliki authorisasi pada page ini")
+            router.push("/login")
+        }
+    },[user])
+
   
 
     const handleHamburgerClick = () => {
@@ -67,6 +85,16 @@ const AdminNavbar = () => {
             setIsFullscreen(!isFullscreen);
         }
     };
+
+    const loginOrLogout = () => {
+        if(user){
+            dispatch(logout())
+            router.push("/login")
+        }
+        else{
+            router.push("/login")
+        }
+    }
     
     
     return (
@@ -85,7 +113,7 @@ const AdminNavbar = () => {
                     <a href="/product"><BsBox className="text-3xl text-pink-500"/></a>
                     <a href="/voucher"><MdOutlineDiscount className="text-3xl text-pink-500"/></a>
                     <a href="/order"><CiBoxList className="text-3xl text-pink-500"/></a>
-                    <button className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
+                    <button onClick={loginOrLogout} className="hidden md:flex px-8 py-2 text-white rounded-xl font-semibold
                      bg-gradient-to-r from-pink-500 to-blue-400
                     xlg:text-3xl">Log Out</button>
                 </div>
@@ -111,7 +139,7 @@ const AdminNavbar = () => {
                     <CiBoxList className="text-3xl text-pink-500"/>
                     <h1>Order Menu</h1>
                 </a>
-                    <button className="flex px-8 mt-8  w-fit py-2 text-white rounded-xl font-semibold
+                    <button onClick={loginOrLogout} className="flex px-8 mt-8  w-fit py-2 text-white rounded-xl font-semibold
                      bg-gradient-to-r from-pink-500 to-blue-400
                     xlg:text-3xl">Log Out</button>
         </div>

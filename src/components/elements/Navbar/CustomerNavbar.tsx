@@ -20,6 +20,7 @@ const Navbar = () => {
     const dispatch = useDispatch()
 
     useEffect(()=>{
+       //console.log(user)
         if(user){
             if(user.role != "CUSTOMER"){
                 alert("Maaf, anda masuk sebagai admin bukan customer")

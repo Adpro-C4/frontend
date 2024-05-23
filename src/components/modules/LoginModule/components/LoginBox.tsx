@@ -1,5 +1,5 @@
 'use client'
-import { loginAsCustomer } from '@/api/service';
+import { loginAsAdmin, loginAsCustomer } from '@/api/service';
 import React, { useState } from 'react';
 import { UseDispatch, useDispatch } from 'react-redux';
 import { login } from '@/redux/slice/AuthSlice';
@@ -18,7 +18,8 @@ const LoginBox = () => {
         router.push("/")
     }
     else{
-        
+        dispatch(login({user: await loginAsAdmin(username, password)}))
+        router.push("/product")
     }
    } catch (error) {
      alert("username atau password salah")

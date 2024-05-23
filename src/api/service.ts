@@ -36,6 +36,18 @@ export const loginAsCustomer = async (username: string, password: string) : Prom
     })
 
     const user: UserDTO = {...res.data.user, role: "CUSTOMER"}
+    console.log(user.id);
+    return user
+}
+
+export const loginAsAdmin = async (username: string, password: string) : Promise<UserDTO>=>{
+    const res = await axios.post("/api-gateway-proxy/auth-service/auth/login/admin",{
+        username: username,
+        password: password
+    })
+
+    const user: UserDTO = {...res.data.user, role: "ADMIN"}
+    console.log(user.id);
 
     return user
 }
