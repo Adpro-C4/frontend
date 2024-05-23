@@ -6,6 +6,7 @@ import { VoucherDTO } from "@/models/VoucherDTO";
 import { DTOCartItemUpdateInformation } from "@/models/DTOCartItemUpdateInformation";
 import { DTOCartItem } from "@/models/DTOCartItem";
 import { DTOCartDeletionInformation } from "@/models/DTOCartDeletionInformation";
+import { DTOPurchaseInformation } from "@/models/DTOPurchaseInformation";
 
 export const getAllProduct = async (): Promise<ProductCardProps[]>=>{
     const res = await axios.get("/api-gateway-proxy/product-service/product/all");
@@ -139,3 +140,10 @@ export const deleteShoppingCartItemData = async (data: DTOCartDeletionInformatio
       throw error;
     }
   };
+
+export const createPurchaseRequest = async (data: DTOPurchaseInformation) => {
+    console.log(data)
+    await axios.post("/api-gateway-proxy/purchase-service/order/create",
+        {...data}
+    )
+}

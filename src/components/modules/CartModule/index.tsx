@@ -14,8 +14,16 @@ const CartModule = ()=> {
     const [cartItems, setCartItems] = useState<DTOCartItem[]>([])
     const router = useRouter();
     useEffect(()=>{
+        if(!user){
+            alert("Maaf hanya customer yang login yang bisa melihat page ini")
+            router.push("/login")
+        }
+    },[user])
+    useEffect(()=>{
         fetchShoppingCart()
     },[user])
+
+    
 
     const handleSelectItem = (productId: string) => {
         setSelectedCartItemsIdx((prevSelected) =>
