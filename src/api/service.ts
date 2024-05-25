@@ -43,20 +43,17 @@ export const getProductById = async (id: number): Promise<Product> => {
 
   };
 
-export const createProduct = async (product: Product): Promise<Product> => {
-    const response = await axios.post(`api-gateway-proxy/product-service/create`, product);
-    return response.data;
+export const createProduct = async (product: Product): Promise<void> => {
+    await axios.post("api-gateway-proxy/product-service/product/create", product);
   };
   
 export const updateProduct = async (product: Product): Promise<void> => {
-    await axios.post(`api-gateway-proxy/product-service/edit`, product);
+    await axios.post("api-gateway-proxy/product-service/product/edit", product);
   };
   
 export const deleteProduct = async (product: Product): Promise<void> => {
-    await axios.post(`api-gateway-proxy/product-service/delete`, product);
+    await axios.post("api-gateway-proxy/product-service/product/delete", product);
   };
-
-
 
 export const register = async (user: UserDTO): Promise<void> => {
     await axios.post("/api-gateway-proxy/auth-service/auth/register/customer",

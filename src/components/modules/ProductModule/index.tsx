@@ -74,7 +74,7 @@ const ProductModule = () => {
         e.preventDefault();
         const { id, name, description, price, discount, brand, category, image, quantity } = formData;
 
-        if (!name || !description || price === 0 || discount === 0 || quantity === 0) {
+        if (!name || price === 0 || discount === 0 || quantity === 0) {
             setError('All fields are required');
             setSuccess('');
         }
@@ -95,17 +95,17 @@ const ProductModule = () => {
             if (id) {
                 await updateProduct(productData);
                 setSuccess('Product updated successfully');
+                alert("Update Succesful, Refresh page to see changes")
             } else {
-                const createdProduct = await createProduct(productData);
-                setFormData(createdProduct);
+                await createProduct(productData);
                 setSuccess('Product created successfully');
+                alert("Create Succesful, Refresh page to see changes")
             }
             setError('');
-            router.push("/voucher");
         } catch (error) {
             setError('Failed to save product');
             setSuccess('');
-            alert("gagal");
+            alert(error);
         }
     };
 
@@ -126,21 +126,12 @@ const ProductModule = () => {
         try {
             await deleteProduct(productData);
             setSuccess('Product deleted successfully');
-            setFormData({
-                id: 0,
-                name: '',
-                description: '',
-                price: 0,
-                discount: 0,
-                brand: '',
-                category: '',
-                image: '',
-                quantity: 0,
-            });
+            alert("Delete Succesful, Refresh page to see changes")
             setError('');
         } catch (error) {
             setError('Failed to delete product');
             setSuccess('');
+            alert(error);
         }
     };
 
@@ -149,7 +140,7 @@ const ProductModule = () => {
             <h1 className="text-2xl font-bold mb-4 text-black">Product Management</h1>
             {error && <p className="text-red-500 font-bold mb-4">{error}</p>}
             {success && <p className="text-green-500 mb-4">{success}</p>}
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-md">
+            <form className="bg-white p-6 rounded shadow-md w-full max-w-md">
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name (String):</label>
                     <input
@@ -244,7 +235,7 @@ const ProductModule = () => {
                        required
                    />
                </div>
-               <button type="submit" className="w-full bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-700">
+               <button onClick={handleSubmit} type="submit" className="w-full bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-700">
                    {formData.id ? 'Update' : 'Create'} Product
                </button>
            </form>
