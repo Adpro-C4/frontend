@@ -51,6 +51,16 @@ function OrderStatus() {
     fetchOrderData();
   }, []);
 
+  const onReceived = async (id: number, orderId: string) => {
+    const data = {
+      id: id,
+      orderId: orderId,
+      orderStatus: 'Selesai',
+    };
+    await axios.post(`https://microservice-status-production.up.railway.app/api/status/update/${id}`, data);
+    fetchOrderData();
+  };
+
 
   
 
@@ -59,57 +69,104 @@ function OrderStatus() {
     <Navbar/>
     
     <div className="container mx-auto p-4">
-    
-      <h1 className="text-2xl font-bold mb-4">Status Order</h1>
-      {orderlist ? (
-        <ul className="space-y-4">
-          {Object.values(orderlist).map((order) => (
-            <li key={order.id} className="bg-white shadow-md rounded-lg p-4">
-              <p className="text-gray-700"><strong>User ID:</strong> {order.userId}</p>
-              <p className="text-gray-700"><strong>Timestamp:</strong> {new Date(order.timestamp).toLocaleString()}</p>
-              <p className="text-gray-700"><strong>Shipping Method:</strong> {order.shippingMethod}</p>
-              <p className="text-gray-700"><strong>Resi:</strong> {order.resi}</p>
-              <p className="text-gray-700"><strong>Customer Details:</strong></p>
-              <ul className="ml-4">
-                <li className="text-gray-600">Fullname: {order.customerDetails.fullname}</li>
-                <li className="text-gray-600">Username: {order.customerDetails.username}</li>
-                <li className="text-gray-600">Phone Number: {order.customerDetails.phoneNumber}</li>
-                <li className="text-gray-600">Email: {order.customerDetails.email}</li>
-              </ul>
-              <p className="text-gray-700"><strong>Address:</strong> {order.address}</p>
-              <p className="text-gray-700"><strong>Price:</strong> {order.price}</p>
-              <p className="text-gray-700">{order.price}</p>
-              <p className="text-gray-700">{order.status?.orderStatus}</p>
-              {(order.voucher) && (
-                  <div>
-                      <h1 className="font-bold text-gray-700">Voucher</h1>
-                      <p className="text-gray-700">{order.voucher.voucherId}</p>
-                      <p className="text-gray-700">{order.voucher.voucherName}</p>
-                      <p className="text-gray-700">{order.voucher.voucherDescription}</p>
-                      <p className="text-gray-700">{order.voucher.voucherDiscount}</p>
-                  </div>
-              )}
-
-              
-              {order.cartItems.length > 0 && (
-                <div>
-                  <p className="text-gray-700"><strong>Cart Items:</strong></p>
-                  <ul className="ml-4">
-                    {order.cartItems.map((item) => (
-                      <li key={item.id} className="border-b border-gray-200 pb-2 mb-2">
-                        <p className="text-gray-600">Product ID: {item.productId}</p>
-                        <p className="text-gray-600">Name: {item.name}</p>
-                        <p className="text-gray-600">Quantity: {item.quantity}</p>
-                        <p className="text-gray-600">Price: {item.price}</p>
-                      </li>
-                    ))}
-                  </ul>
+        <h1 className="text-2xl font-bold mb-4">Status Order</h1>
+        {orderlist ? (
+          <ul className="space-y-4">
+            {Object.values(orderlist).map((order) => (
+              <li key={order.id} className="bg-white shadow-md rounded-lg p-4">
+                <div className="flex flex-row">
+                  <p className="text-gray-700">{order.userId}</p>
+                  <p className="text-gray-700">--</p>
+                  <p className="text-gray-700 font-bold">{order.customerDetails.username}</p>
                 </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : (
+
+                <p className="text-gray-700 text-sm">Timestamp: {new Date(order.timestamp).toLocaleString()}</p>
+
+                <div className="flex flex-col space-y-2 mt-4">
+                  <h2 className="text-gray-700">Detail Customer:</h2>
+                  <p className="text-gray-500 text-md">Fullname: {order.customerDetails.fullname}</p>
+                  <p className="text-gray-500 text-md">Phone Number: {order.customerDetails.phoneNumber}</p>
+                  <p className="text-gray-500 text-md">Email: {order.customerDetails.email}</p>
+                </div>
+
+                <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+
+                <div className="flex flex-col space-y-2 mt-4">
+                  <h2 className="text-gray-700"> <strong>Shipping Yang Diajukan Customer</strong></h2>
+                  <p className="text-gray-700">Metode Pengemasan: {order.shippingMethod}</p>
+                  <p className="text-gray-700">Nomor Resi: {order.resi}
+                  </p>
+                </div>
+                
+
+                <div className="flex flex-col space-y-2 mt-4">
+                  <h2 className="text-gray-700">Detail Pemesanan:</h2>
+                  <p className="text-gray-700">Alamat: {order.address}</p>
+                  <p className="text-gray-700">Total Harga: {order.price}</p>
+                  {order.status?.orderStatus === 'Menunggu Persetujuan Admin' && (
+                    <p className="text-blue-500 font-bold">{order.status.orderStatus}</p>
+                  )}
+                  {order.status?.orderStatus === 'Gagal' && (
+                    <p className="text-red-500 font-bold">{order.status.orderStatus}</p>
+                  )}
+                  {order.status?.orderStatus === 'Disetujui' && (
+                    <p className="text-yellow-500 font-bold">{order.status.orderStatus}</p>
+                  )}
+                  {order.status?.orderStatus === 'Dikirim' && (
+                    <p className="text-green-500 font-bold">{order.status.orderStatus}</p>
+                  )}
+                  {order.status?.orderStatus === 'Selesai' && (
+                    <p className="text-pink-500 font-bold">{order.status.orderStatus}</p>
+                  )}
+                </div>
+
+                {order.voucher && (
+                  <div className="mt-4">
+                    <h1 className="font-bold text-gray-700">Voucher</h1>
+                    <p className="text-gray-700">Voucher ID: {order.voucher.voucherId}</p>
+                    <p className="text-gray-700">Voucher Name: {order.voucher.voucherName}</p>
+                    <p className="text-gray-700">Voucher Description: {order.voucher.voucherDescription}</p>
+                    <p className="text-gray-700">Voucher Discount: {order.voucher.voucherDiscount}</p>
+                  </div>
+                )}
+
+                {order.cartItems.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-gray-700 font-bold">Cart Items:</p>
+                    <ul className="ml-4">
+                      {order.cartItems.map((item) => (
+                        <li key={item.id} className="border-b border-gray-200 pb-2 mb-2">
+                          <p className="text-gray-600">Product ID: {item.productId}</p>
+                          <p className="text-gray-600">Name: {item.name}</p>
+                          <p className="text-gray-600">Quantity: {item.quantity}</p>
+                          <p className="text-gray-600">Price: {item.price}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  {(order.status?.orderStatus === 'Dikirim' ) && (
+                    <div>
+                      <button
+                        onClick={() => onReceived(order.status!.id, order.status!.orderId)}
+                        className="bg-pink-500 px-2 py-1 rounded hover:bg-pink-400 mx-2"
+                      >
+                        Selesai
+                      </button>
+
+                  </div>
+                  )}
+
+                </div>
+              </li>
+              
+            ))}
+
+          </ul>
+          
+        ) : (
         <div role="status" className="flex justify-center items-center h-48">
           <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -118,7 +175,9 @@ function OrderStatus() {
           <span className="sr-only">Loading...</span>
         </div>
       )}
+
     </div>
+
   </main>
 
   );

@@ -27,12 +27,21 @@ export interface Order {
     totalPrice: number;
     status?: Status;
     voucher?:Voucher;
+    trackOrder?:TrackOrder;
   }
 
 export interface Status{
     id: number;
     orderId: string;
     orderStatus: string;
+}
+
+export interface TrackOrder{
+    trackingId: string;
+    orderId: string;
+    method: string;
+    resiCode: string;
+
 }
 
 export interface OrderResponse {
