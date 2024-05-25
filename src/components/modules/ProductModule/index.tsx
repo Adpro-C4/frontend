@@ -77,19 +77,18 @@ const ProductModule = () => {
         if (!name || !description || price === 0 || discount === 0 || quantity === 0) {
             setError('All fields are required');
             setSuccess('');
-            return;
         }
 
         const productData: Product = {
-            id,
-            name,
-            description,
-            price,
-            discount,
-            brand,
-            category,
-            image,
-            quantity,
+            id: parseInt(id.toString()),
+            name: name,
+            description: description,
+            price: parseInt(price.toString()),
+            discount: parseInt(discount.toString()),
+            brand: brand,
+            category: category,
+            image: image,
+            quantity: parseInt(quantity.toString()),
         };
 
         try {
@@ -102,16 +101,30 @@ const ProductModule = () => {
                 setSuccess('Product created successfully');
             }
             setError('');
-            router.push("/product");
+            router.push("/voucher");
         } catch (error) {
             setError('Failed to save product');
             setSuccess('');
+            alert("gagal");
         }
     };
 
     const handleDelete = async () => {
+        const { id, name, description, price, discount, brand, category, image, quantity } = formData;
+        const productData: Product = {
+            id: parseInt(id.toString()),
+            name: name,
+            description: description,
+            price: parseInt(price.toString()),
+            discount: parseInt(discount.toString()),
+            brand: brand,
+            category: category,
+            image: image,
+            quantity: parseInt(quantity.toString()),
+        };
+
         try {
-            await deleteProduct(formData);
+            await deleteProduct(productData);
             setSuccess('Product deleted successfully');
             setFormData({
                 id: 0,
@@ -161,7 +174,7 @@ const ProductModule = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price (Double):</label>
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price :</label>
                     <input
                         type="number"
                         id="price"
@@ -170,11 +183,11 @@ const ProductModule = () => {
                         onChange={handleChange}
                         className="mt-1 block w-full text-black border border-gray-300 rounded-md p-2"
                         required
-                        step="0.01"
+                        step="1"
                     />
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="discount" className="block text-sm font-medium text-gray-700">Discount (Double):</label>
+                    <label htmlFor="discount" className="block text-sm font-medium text-gray-700">Discount :</label>
                     <input
                         type="number"
                         id="discount"
@@ -183,7 +196,7 @@ const ProductModule = () => {
                         onChange={handleChange}
                         className="mt-1 block w-full text-black border border-gray-300 rounded-md p-2"
                         required
-                        step="0.01"
+                        step="1"
                     />
                 </div>
                 <div className="mb-4">
@@ -260,13 +273,9 @@ const ProductModule = () => {
                        <tr>
                            <th className="px-4 py-2">ID</th>
                            <th className="px-4 py-2">Name</th>
-                           <th className="px-4 py-2">Description</th>
                            <th className="px-4 py-2">Price</th>
-                           <th className="px-4 py-2">Discount</th>
-                           <th className="px-4 py-2">Brand</th>
-                           <th className="px-4 py-2">Category</th>
+                           <th className="px-4 py-2">Stok</th>
                            <th className="px-4 py-2">Image</th>
-                           <th className="px-4 py-2">Quantity</th>
                        </tr>
                    </thead>
                    <tbody>
@@ -275,11 +284,10 @@ const ProductModule = () => {
                                <td className="border px-4 py-2">{product.productId}</td>
                                <td className="border px-4 py-2">{product.name}</td>
                                <td className="border px-4 py-2">{product.price}</td>
-                               <td className="border px-4 py-2">{product.category}</td>
+                               <td className="border px-4 py-2">{product.stock}</td>
                                <td className="border px-4 py-2">
                                    <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover" />
                                </td>
-                               <td className="border px-4 py-2">{product.stock}</td>
                            </tr>
                        ))}
                    </tbody>

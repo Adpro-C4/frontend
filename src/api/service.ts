@@ -36,7 +36,7 @@ export const getProductById = async (id: number): Promise<Product> => {
         brand: data.brand,
         category: data.category,
         image: data.image,
-        quantity: data.quantity
+        quantity: data.quantity,
     }
 
   };
